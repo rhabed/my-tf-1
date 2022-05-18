@@ -7,5 +7,5 @@ variable "region" {
 variable "host_count" {
   description = "The Region that we will be building the module in"
   type        = number
-  default     = 2
+  default     = 1
 }
