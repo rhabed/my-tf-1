@@ -13,10 +13,10 @@ resource "random_shuffle" "az" {
 }
 
 resource "null_resource" "ec2_host_fleet" {
-    triggers = {
-        trigger = local.scaling
-    }
-    provisioner "local-exec" {
-        command = local.cmd
-    }
+  triggers = {
+    trigger = local.scaling
+  }
+  provisioner "local-exec" {
+    command = local.cmd
+  }
 }

@@ -18,6 +18,6 @@ variable "action" {
 
 variable "host_ids" {
   description = "List of host ids to release"
-  type = string
-  default = "h-0d1007aa74c893f6f"
+  type        = string
+  default     = "h-0d1007aa74c893f6f"
 }
