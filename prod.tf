@@ -1,12 +1,18 @@
 
 
-resource "aws_ec2_host" "test" {
-  count = var.host_count
-  instance_type     = "a1.medium"
-  availability_zone = "ap-southeast-2a"
-  host_recovery     = "on"
-  auto_placement    = "on"
-  tags = {
-    Name  = "ec2-host-${count.index + 1}"
-  }
+# resource "aws_ec2_host" "test" {
+#   instance_type     = "a1.medium"
+#   availability_zone = "ap-southeast-2a"
+#   host_recovery     = "on"
+#   auto_placement    = "on"
+
+# }
+
+resource "null_resource" "ec2_host_fleet" {
+    triggers = {
+        number_of_host = "robert"
+    }
+    provisioner "local-exec" {
+        command = "aws ec2 allocate-hosts --instance-family \"a1\" --availability-zone \"ap-southeast-2a\" --auto-placement \"off\" --host-recovery \"on\" --quantity ${var.host_count} "
+    }
 }
