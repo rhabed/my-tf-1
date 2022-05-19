@@ -17,6 +17,6 @@ resource "null_resource" "ec2_host_fleet" {
         trigger = local.scaling
     }
     provisioner "local-exec" {
-        command = local.allocate_host_cmd
+        command = local.cmd
     }
 }
