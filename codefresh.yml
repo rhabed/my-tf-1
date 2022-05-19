@@ -1,0 +1,87 @@
+version: "1.0"
+stages:
+  - "clone"
+  - "test"
+  - "deploy"
+  - "destroy"
+
+steps:
+  clone:
+    title: "Cloning repository"
+    type: "git-clone"
+    repo: "rhabed/my-tf-1"
+    revision: "${{CF_REVISION}}"
+    git: "github"
+    stage: "clone"
+
+
+  test:
+    title: "Running test"
+    image: "hashicorp/terraform:1.1.9" 
+    working_directory: "${{clone}}" # Running command where code cloned
+    arguments:
+      AWS_ACCESS_KEY_ID: ${{AWS_ACCESS_KEY_ID}}
+      AWS_SECRET_ACCESS_KEY: ${{AWS_SECRET_ACCESS_KEY}}
+    commands:
+      - cf_export TF_VAR_action=${{ACTION}}
+      - terraform init
+      - terraform validate
+      - terraform plan -var-file=my.tfvars -out ${{CF_VOLUME_PATH}}/${{CF_BUILD_ID}}.tfplan
+    stage: "test"
+
+  deploy:
+    title: "Running Deploy"
+    #image: "hashicorp/terraform:latest" 
+    image: "amazonlinux"
+    working_directory: "${{clone}}" # Running command where code cloned
+    arguments:
+      AWS_ACCESS_KEY_ID: ${{AWS_ACCESS_KEY_ID}}
+      AWS_SECRET_ACCESS_KEY: ${{AWS_SECRET_ACCESS_KEY}}
+    commands:
+      - echo "Installing Terraform"
+      - yum install -y yum-utils
+      - yum-config-manager --add-repo https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo
+      - yum -y install terraform
+      - echo "Installing AWS CLI"
+      - yum -y install unzip
+      - curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+      - unzip awscliv2.zip
+      - ./aws/install
+      - terraform apply -auto-approve ${{CF_VOLUME_PATH}}/${{CF_BUILD_ID}}.tfplan
+    stage: "deploy"
+
+  generate_destroy_plan:
+    title: "Plan Destroy"
+    image: "hashicorp/terraform:latest" 
+    working_directory: "${{clone}}" # Running command where code cloned
+    arguments:
+      AWS_ACCESS_KEY_ID: ${{AWS_ACCESS_KEY_ID}}
+      AWS_SECRET_ACCESS_KEY: ${{AWS_SECRET_ACCESS_KEY}}
+    commands:
+      - terraform plan -destroy -var-file=my.tfvars
+    when: &destroy
+      condition:
+        all:
+          destroy: '"${{DESTROY}}" == "yes"'
+  
+  approve_destroy:
+    type: pending-approval
+    stage: destroy
+    title: Approve Destroy
+    timeout:
+      duration: 12
+      finalState: denied
+    when: *destroy
+
+  destroy:
+    title: "Running Destroy"
+    image: "hashicorp/terraform:latest" 
+    working_directory: "${{clone}}" # Running command where code cloned
+    arguments:
+      AWS_ACCESS_KEY_ID: ${{AWS_ACCESS_KEY_ID}}
+      AWS_SECRET_ACCESS_KEY: ${{AWS_SECRET_ACCESS_KEY}}
+    commands:
+      - terraform destroy -auto-approve -var-file=my.tfvars
+    stage: "destroy"
+    when: *destroy
+    
