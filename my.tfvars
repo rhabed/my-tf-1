@@ -1,5 +1,5 @@
 region     = "ap-southeast-2"
-action     = "allocate"
+action     = "release"
 host_count = 1
-host_ids   = ""
+host_ids   = "h-0e59905b3f030f0e7"
 
