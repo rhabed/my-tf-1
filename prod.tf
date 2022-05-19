@@ -14,9 +14,9 @@ resource "random_shuffle" "az" {
 
 resource "null_resource" "ec2_host_fleet" {
     triggers = {
-        trigger = var.scaling
+        trigger = local.scaling
     }
     provisioner "local-exec" {
-        command = var.allocate_host_cmd
+        command = local.allocate_host_cmd
     }
 }
