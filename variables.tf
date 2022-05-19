@@ -5,7 +5,19 @@ variable "region" {
 }
 
 variable "host_count" {
-  description = "The Region that we will be building the module in"
+  description = "Numer of Hosts"
   type        = number
   default     = 1
+}
+
+variable "action" {
+  description = "Allocate or release dedicated hosts"
+  type        = string
+  default     = "nodeployment"
+}
+
+variable "host_ids" {
+  description = "List of host ids to release"
+  type = string
+  default = ""
 }
