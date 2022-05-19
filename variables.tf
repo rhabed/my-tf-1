@@ -13,11 +13,11 @@ variable "host_count" {
 variable "action" {
   description = "Allocate or release dedicated hosts"
   type        = string
-  default     = "nodeployment"
+  default     = "release"
 }
 
 variable "host_ids" {
   description = "List of host ids to release"
   type = string
-  default = ""
+  default = "h-0d1007aa74c893f6f"
 }
