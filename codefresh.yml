@@ -26,6 +26,9 @@ steps:
       - cf_export TF_VAR_action=${{ACTION}}
       - terraform init
       - terraform validate
+      - sed -i 's|ACTION|'"${{ACTION}}"'|g' ./my.tfvars
+      - sed -i 's|HOST_ID|'"${{HOST_ID}}"'|g' ./my.tfvars
+      - cat ./my.tfvars
       - terraform plan -var-file=my.tfvars -out ${{CF_VOLUME_PATH}}/${{CF_BUILD_ID}}.tfplan
     stage: "test"
 

@@ -1,5 +1,5 @@
 region     = "ap-southeast-2"
-action     = ":"
+action     = "ACTION"
 host_count = 1
-host_ids   = "h-0e59905b3f030f0e7"
+host_ids   = "HOST_ID"
 
