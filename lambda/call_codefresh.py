@@ -20,7 +20,7 @@ NO_CACHE_BOOL="true"
 NO_CF_CACHE_BOOL="true"
 RESET_VOLUME_BOOL="true"
 ENABLE_NOTIFICATIONS_BOOL="true"
-DATA = '{"branch":"main","trigger":"my-trigger", "variables":${VARIABLES_OBJ}}'
+DATA = {"branch":"main","trigger":"my-trigger", "variables":{VARIABLES_OBJ}}
 ## ,"variables":${VARIABLES_OBJ},"options":{"noCache":${NO_CACHE_BOOL},"noCfCache":${NO_CF_CACHE_BOOL},"resetVolume":${RESET_VOLUME_BOOL},"enableNotifications":${ENABLE_NOTIFICATIONS_BOOL}}}'
 
 def initiate_pipeline():
