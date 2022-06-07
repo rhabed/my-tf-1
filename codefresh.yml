@@ -72,6 +72,7 @@ steps:
 
   destroy:
     title: "Running Destroy"
+    stage: destroy
     image: "alpine/terragrunt" 
     working_directory: "${{clone}}" # Running command where code cloned
     arguments:
@@ -79,6 +80,5 @@ steps:
       AWS_SECRET_ACCESS_KEY: ${{AWS_SECRET_ACCESS_KEY}}
     commands:
       - terragrunt run-all destroy -auto-approve
-    stage: "destroy"
     when: *destroy
     
