@@ -58,7 +58,7 @@ steps:
     commands:
       - echo "Destroying SQS 2"
       - cd ./sqs2
-      - terragrunt destroy --terragrunt-non-interactive --terragrunt-log-level trace
+      - terragrunt destroy -auto-approve --terragrunt-non-interactive --terragrunt-log-level trace
     stage: "deploy"
 
   generate_destroy_plan:
