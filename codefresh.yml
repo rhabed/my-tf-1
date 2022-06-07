@@ -44,11 +44,26 @@ steps:
       AWS_SECRET_ACCESS_KEY: ${{AWS_SECRET_ACCESS_KEY}}
     commands:
       - echo "Applying Plan"
-      - terragrunt run-all apply -terragrunt-non-interactive -auto-approve #${{CF_VOLUME_PATH}}/${{CF_BUILD_ID}}.tfplan
+      - terragrunt run-all apply --terragrunt-non-interactive --terragrunt-log-level trace
+    stage: "deploy"
+
+  remove_sqs2:
+    title: "Remove SQS 2"
+    #image: "hashicorp/terraform:latest" 
+    image: "alpine/terragrunt" 
+    working_directory: "${{clone}}" # Running command where code cloned
+    arguments:
+      AWS_ACCESS_KEY_ID: ${{AWS_ACCESS_KEY_ID}}
+      AWS_SECRET_ACCESS_KEY: ${{AWS_SECRET_ACCESS_KEY}}
+    commands:
+      - echo "Destroying SQS 2"
+      - cd ./sqs2
+      - terragrunt destroy --terragrunt-non-interactive --terragrunt-log-level trace
     stage: "deploy"
 
   generate_destroy_plan:
     title: "Plan Destroy"
+    stage: destroy
     image: "alpine/terragrunt" 
     working_directory: "${{clone}}" # Running command where code cloned
     arguments:
@@ -79,6 +94,6 @@ steps:
       AWS_ACCESS_KEY_ID: ${{AWS_ACCESS_KEY_ID}}
       AWS_SECRET_ACCESS_KEY: ${{AWS_SECRET_ACCESS_KEY}}
     commands:
-      - terragrunt run-all destroy -terragrunt-non-interactive -auto-approve
+      - terragrunt run-all destroy --terragrunt-non-interactive --terragrunt-log-level trace
     when: *destroy
     
