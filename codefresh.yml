@@ -17,51 +17,45 @@ steps:
 
   test:
     title: "Running test"
-    image: "hashicorp/terraform:1.1.9" 
+    image: "alpine/terragrunt" 
     working_directory: "${{clone}}" # Running command where code cloned
     arguments:
       AWS_ACCESS_KEY_ID: ${{AWS_ACCESS_KEY_ID}}
       AWS_SECRET_ACCESS_KEY: ${{AWS_SECRET_ACCESS_KEY}}
     commands:
-      - cf_export TF_VAR_action=${{ACTION}}
-      - terraform init
-      - terraform validate
-      - sed -i 's|ACTION|'"${{ACTION}}"'|g' ./my.tfvars
-      - sed -i 's|HOST_ID|'"${{HOST_ID}}"'|g' ./my.tfvars
-      - cat ./my.tfvars
-      - terraform plan -var-file=my.tfvars -out ${{CF_VOLUME_PATH}}/${{CF_BUILD_ID}}.tfplan
+      # - cf_export TF_VAR_action=${{ACTION}}
+      - terragrunt run-all init
+      - terragrunt run-all validate
+      - terragrunt run-all plan -out ${{CF_VOLUME_PATH}}/${{CF_BUILD_ID}}.tfplan
+      # - terraform validate
+      # - sed -i 's|ACTION|'"${{ACTION}}"'|g' ./my.tfvars
+      # - sed -i 's|HOST_ID|'"${{HOST_ID}}"'|g' ./my.tfvars
+      # - cat ./my.tfvars
+      # - terraform plan -var-file=my.tfvars -out ${{CF_VOLUME_PATH}}/${{CF_BUILD_ID}}.tfplan
     stage: "test"
 
   deploy:
     title: "Running Deploy"
     #image: "hashicorp/terraform:latest" 
-    image: "amazonlinux"
+    image: "alpine/terragrunt" 
     working_directory: "${{clone}}" # Running command where code cloned
     arguments:
       AWS_ACCESS_KEY_ID: ${{AWS_ACCESS_KEY_ID}}
       AWS_SECRET_ACCESS_KEY: ${{AWS_SECRET_ACCESS_KEY}}
     commands:
-      - echo "Installing Terraform"
-      - yum install -y yum-utils
-      - yum-config-manager --add-repo https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo
-      - yum -y install terraform
-      - echo "Installing AWS CLI"
-      - yum -y install unzip
-      - curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-      - unzip awscliv2.zip
-      - ./aws/install
-      - terraform apply -auto-approve ${{CF_VOLUME_PATH}}/${{CF_BUILD_ID}}.tfplan
+      - echo "Applying Plan"
+      - terragrunt run-all apply -auto-approve ${{CF_VOLUME_PATH}}/${{CF_BUILD_ID}}.tfplan
     stage: "deploy"
 
   generate_destroy_plan:
     title: "Plan Destroy"
-    image: "hashicorp/terraform:latest" 
+    image: "alpine/terragrunt" 
     working_directory: "${{clone}}" # Running command where code cloned
     arguments:
       AWS_ACCESS_KEY_ID: ${{AWS_ACCESS_KEY_ID}}
       AWS_SECRET_ACCESS_KEY: ${{AWS_SECRET_ACCESS_KEY}}
     commands:
-      - terraform plan -destroy -var-file=my.tfvars
+      - terragrunt run-all plan -destroy
     when: &destroy
       condition:
         all:
@@ -78,13 +72,13 @@ steps:
 
   destroy:
     title: "Running Destroy"
-    image: "hashicorp/terraform:latest" 
+    image: "alpine/terragrunt" 
     working_directory: "${{clone}}" # Running command where code cloned
     arguments:
       AWS_ACCESS_KEY_ID: ${{AWS_ACCESS_KEY_ID}}
       AWS_SECRET_ACCESS_KEY: ${{AWS_SECRET_ACCESS_KEY}}
     commands:
-      - terraform destroy -auto-approve -var-file=my.tfvars
+      - terragrunt run-all destroy -auto-approve
     stage: "destroy"
     when: *destroy
     
