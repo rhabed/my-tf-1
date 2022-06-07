@@ -61,6 +61,10 @@ steps:
       - cd ./sqs2
       - terragrunt destroy -auto-approve --terragrunt-non-interactive --terragrunt-log-level trace
     stage: "deploy"
+    when: 
+      condition:
+        all:
+          destroy: '"${{CF_BUILD_TRIGGER}}" != "webhook"'
 
   generate_destroy_plan:
     title: "Plan Destroy"
