@@ -44,7 +44,7 @@ steps:
       AWS_SECRET_ACCESS_KEY: ${{AWS_SECRET_ACCESS_KEY}}
     commands:
       - echo "Applying Plan"
-      - terragrunt run-all apply -terragrunt-non-interactive #-auto-approve ${{CF_VOLUME_PATH}}/${{CF_BUILD_ID}}.tfplan
+      - terragrunt run-all apply -terragrunt-non-interactive -auto-approve #${{CF_VOLUME_PATH}}/${{CF_BUILD_ID}}.tfplan
     stage: "deploy"
 
   generate_destroy_plan:
@@ -79,6 +79,6 @@ steps:
       AWS_ACCESS_KEY_ID: ${{AWS_ACCESS_KEY_ID}}
       AWS_SECRET_ACCESS_KEY: ${{AWS_SECRET_ACCESS_KEY}}
     commands:
-      - terragrunt run-all destroy -terragrunt-non-interactive #-auto-approve
+      - terragrunt run-all destroy -terragrunt-non-interactive -auto-approve
     when: *destroy
     
