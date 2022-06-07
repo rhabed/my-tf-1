@@ -24,6 +24,7 @@ steps:
       AWS_SECRET_ACCESS_KEY: ${{AWS_SECRET_ACCESS_KEY}}
     commands:
       # - cf_export TF_VAR_action=${{ACTION}}
+      - echo ${{CF_BUILD_TRIGGER}}
       - terragrunt run-all init
       - terragrunt run-all validate
       - terragrunt run-all plan -out ${{CF_VOLUME_PATH}}/${{CF_BUILD_ID}}.tfplan
