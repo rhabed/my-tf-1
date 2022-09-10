@@ -9,7 +9,7 @@ variable "subnet_ids" {
 
 resource "aws_ec2_host" "host" {
     count = 2
-    instance_family = "m4"
+    instance_family = "a1"
     host_recovery =  "off"
     auto_placement = "off"
     availability_zone = var.az[count.index % 2]
@@ -17,8 +17,8 @@ resource "aws_ec2_host" "host" {
 
 resource "aws_instance" "instance" {
     count = 2
-    ami = data.aws_ami.ubuntu.id
-    instance_type = "m4.large"
+    ami = "ami-0bdcaf42df740a10e" # data.aws_ami.ubuntu.id
+    instance_type = "a1.medium"
     availability_zone = var.az[count.index % 2]
     subnet_id = var.subnet_ids[count.index % 2]
     host_id = aws_ec2_host.host[count.index].id
